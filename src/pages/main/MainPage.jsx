@@ -18,6 +18,8 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const { users, isSuccess, matchUsers } = useSelector((state) => state.user);
 
+  console.log(matchUsers);
+
   //////// simple code ///////
 
   //   const [lastDirection, setLastDirection] = useState();
@@ -51,6 +53,10 @@ const MainPage = () => {
       dispatch(__userReset());
     };
   }, [users, isSuccess, dispatch]);
+
+  useEffect(() => {
+    dispatch(__getMatchUsersThunk());
+  }, []);
 
   // 새로고침 했을 때 마운트 되기전에 useState에 안담겨서
   // undefined 발생
@@ -182,15 +188,12 @@ const MainPage = () => {
         <div>
           <StchatBox>
             <Sttitle>
-              <p>message</p>
+              <p>나와 매치된 유저 🥰</p>
             </Sttitle>
             <StchatList>
               {matchUsers.map((matchUser) => {
                 return <Card key={matchUser.id} matchUser={matchUser} />;
               })}
-              <div></div>
-              <div></div>
-              <div></div>
             </StchatList>
           </StchatBox>
         </div>
@@ -221,6 +224,7 @@ const MainPage = () => {
                     <h1>
                       {character.nickName}, {character.age}
                     </h1>
+                    <h2>{character.distance}</h2>
                   </StCard>
                 </TinderCard>
               </StTinderBox>
@@ -246,7 +250,7 @@ const MainPage = () => {
               Swipe right!
             </button>
           </Stbuttons>
-          {lastDirection ? (
+          {/* {lastDirection ? (
             <StinfoText key={lastDirection}>
               You swiped {lastDirection}
             </StinfoText>
@@ -254,7 +258,7 @@ const MainPage = () => {
             <StinfoText>
               Swipe a card or press a button to get Restore Card button visible!
             </StinfoText>
-          )}
+          )} */}
         </div>
       </StContainer>
     </Layout>
@@ -301,6 +305,8 @@ const StCard = styled.div`
   border-radius: 20px;
   background-size: cover;
   background-position: center;
+  /* display: flex;
+  flex-direction: column-reverse; */
   & > h1 {
     position: absolute;
     bottom: 0;
@@ -315,6 +321,7 @@ const Stbuttons = styled.div`
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  gap: 20px;
   & > button {
     flex-shrink: 0;
     padding: 10px;
@@ -328,6 +335,7 @@ const Stbuttons = styled.div`
     font-weight: bolder;
     width: 160px;
     box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
     @media (max-width: 625px) {
       flex-direction: column;
     }
@@ -356,7 +364,7 @@ const Sttitle = styled.div`
   justify-content: center;
   p {
     margin: 0;
-    font-size: 50px;
+    font-size: 30px;
     color: white;
   }
 `;
@@ -369,11 +377,11 @@ const StchatList = styled.div`
   gap: 40px;
   margin-top: 40px;
 
-  div {
+  /* div {
     border: 1px solid black;
     width: 80%;
     height: 50px;
-  }
+  } */
 `;
 
 // const Stdashboard = styled.div`

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WelcomePage from "../pages/welcomePage/WelcomePage";
 import Signup from "../pages/login/Signup";
+import Signin from "../pages/login/Signin";
 import MainPage from "../pages/main/MainPage";
 import Match from "../pages/match/Match";
 
@@ -12,7 +13,7 @@ const Router = () => {
         <Route path={"/"} element={<WelcomePage />} />
 
         {/* Login */}
-        {/* <Route path={"/signin"} element={<Signin />} /> */}
+        <Route path={"/signin"} element={<Signin />} />
         <Route path={"/signup"} element={<Signup />} />
 
         {/* Main Page */}
@@ -20,7 +21,7 @@ const Router = () => {
 
         {/* Match Page */}
         <Route path={"/match"}>
-          <Route path={":matchId"} element={<Match />} />
+          <Route path={":roomId"} element={<Match />} />
         </Route>
 
         {/* Create Profile */}
