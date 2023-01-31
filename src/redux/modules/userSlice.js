@@ -44,7 +44,7 @@ export const __signin = createAsyncThunk(
         "http://13.209.85.54:8080/members/login",
         user
       );
-
+      console.log(user);
       localStorage.setItem("access_token", result.headers.authorization);
       // sessionStorage.setItem("refresh_token", res.headers.authorization);
       return thunkAPI.fulfillWithValue(result.headers.authorization);
@@ -68,7 +68,7 @@ export const __getUsersThunk = createAsyncThunk(
           headers: {
             "Content-Type": "application/json",
             Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNTM2OTYsImlhdCI6MTY3NTE1MDA5Nn0.tKJlNepjw95qmvaTCK3mxPt3w2-VJ0fXVjJ4wzJyC-M",
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNjM3NDMsImlhdCI6MTY3NTE2MDE0M30.R0MDL7tl43HN6dk-syr6dPDRzf-0RVwKbmxd6UHN4oU",
           },
           // params: {
           //   page: "1",
@@ -96,7 +96,7 @@ export const __getMatchUsersThunk = createAsyncThunk(
           headers: {
             "Content-Type": "application/json",
             Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNTM2OTYsImlhdCI6MTY3NTE1MDA5Nn0.tKJlNepjw95qmvaTCK3mxPt3w2-VJ0fXVjJ4wzJyC-M",
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNjM3NDMsImlhdCI6MTY3NTE2MDE0M30.R0MDL7tl43HN6dk-syr6dPDRzf-0RVwKbmxd6UHN4oU",
           },
         },
         { withCredentials: true }
@@ -121,7 +121,7 @@ export const __getMatchRoomThunk = createAsyncThunk(
           headers: {
             "Content-Type": "application/json",
             Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNTM2OTYsImlhdCI6MTY3NTE1MDA5Nn0.tKJlNepjw95qmvaTCK3mxPt3w2-VJ0fXVjJ4wzJyC-M",
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNjM3NDMsImlhdCI6MTY3NTE2MDE0M30.R0MDL7tl43HN6dk-syr6dPDRzf-0RVwKbmxd6UHN4oU",
           },
         },
         { withCredentials: true }
