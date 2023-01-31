@@ -133,15 +133,21 @@ const StCommentContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: stretch;
   height: 500px;
-  border: 1px solid black;
 `;
 
-const StCommentInputContainer = styled.div``;
+const StCommentInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #dcdcdc;
+  height: 500px;
+  gap: 20px;
+`;
 
 const StCommentTextField = styled(TextField)`
-  width: 90%;
+  width: 60%;
   height: 55px;
 `;
 

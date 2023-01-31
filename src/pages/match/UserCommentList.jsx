@@ -20,4 +20,8 @@ const UserCommentList = ({ comments, onClickDelete, onClickModify }) => {
 
 export default UserCommentList;
 
-const StContainer = styled.div``;
+const StContainer = styled.div`
+  width: 100%;
+  height: 200px;
+  border: 1px solid black;
+`;
