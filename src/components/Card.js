@@ -4,13 +4,15 @@ import { Link } from "react-router-dom";
 
 const Card = ({ matchUser }) => {
   return (
-    <StLink to={`/match/${matchUser.id}`} key={matchUser.id}>
+    <StLink to={`/match/${matchUser.roomId}`} key={matchUser.id}>
       <StCard>
         <StImgContainer>
           <img src={matchUser.profile} />
         </StImgContainer>
         <StTextContainer>
           <div>{matchUser.nickName}</div>
+          <div>{matchUser.age}</div>
+          <div>{matchUser.distance}</div>
         </StTextContainer>
       </StCard>
     </StLink>
@@ -25,25 +27,36 @@ const StLink = styled(Link)`
 
 const StCard = styled.div`
   color: #333333;
-  width: 240px;
-  height: 360px;
+  border: 1px solid #9198e5;
+  width: 300px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  gap: 50px;
 `;
 
 const StImgContainer = styled.div`
-  width: 90%;
-  height: 230px;
+  width: 30%;
   margin: 0 auto;
   border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  padding-left: 15px;
   & > img {
-    width: 90%;
-    height: 100%;
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
     object-fit: cover;
-    border-radius: 15px;
   }
 `;
 
 const StTextContainer = styled.div`
-  padding-left: 15px;
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   & > div:first-child {
     margin: 10px 0px 5px 0px;
     font-size: 20px;

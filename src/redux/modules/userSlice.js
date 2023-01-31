@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 // import { client } from "../../shared/api/api";
 // import { authAPI } from "../../shared/api/authAPI";
+import { tokenManager } from "../../shared/utils/tokenManeger";
 import axios from "axios";
 
 /* Action Type */
@@ -11,6 +12,7 @@ export const actionType = {
     GET_USER_INFO: "GET_USER_INFO",
     GET_USERS: "GET_USERS",
     GET_MATCH_USERS: "GET_MATCH_USERS",
+    GET_MATCH_ROOM: "GET_MATCH_ROOM",
   },
 };
 
@@ -32,6 +34,29 @@ export const __signup = createAsyncThunk(
   }
 );
 
+////// 로그인 //////
+export const __signin = createAsyncThunk(
+  actionType.user.POST_SIGNIN,
+  async (user, thunkAPI) => {
+    console.log(user);
+    try {
+      const result = await axios.post(
+        "http://13.209.85.54:8080/members/login",
+        user
+      );
+
+      localStorage.setItem("access_token", result.headers.authorization);
+      // sessionStorage.setItem("refresh_token", res.headers.authorization);
+      return thunkAPI.fulfillWithValue(result.headers.authorization);
+    } catch (error) {
+      if (400 < error.status < 500) {
+        alert(error.response.data.message);
+      }
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 ///////// 전체 유저 조회 thunk,GET ///////////////////
 export const __getUsersThunk = createAsyncThunk(
   actionType.user.GET_USERS,
@@ -43,7 +68,7 @@ export const __getUsersThunk = createAsyncThunk(
           headers: {
             "Content-Type": "application/json",
             Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUwNjU1MzAsImlhdCI6MTY3NTA2MTkzMH0.5y1gABc6CyMWNH2FpKmYclaSbzcfn2wqWB67cU_zEi4",
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNTM2OTYsImlhdCI6MTY3NTE1MDA5Nn0.tKJlNepjw95qmvaTCK3mxPt3w2-VJ0fXVjJ4wzJyC-M",
           },
           // params: {
           //   page: "1",
@@ -60,7 +85,7 @@ export const __getUsersThunk = createAsyncThunk(
   }
 );
 
-///////// 매치된 유저 조회 thunk,GET ///////////////////
+///////// 매치된 유저 전체 조회 thunk,GET ///////////////////
 export const __getMatchUsersThunk = createAsyncThunk(
   actionType.user.GET_MATCH_USERS,
   async (payload, thunkAPI) => {
@@ -71,7 +96,32 @@ export const __getMatchUsersThunk = createAsyncThunk(
           headers: {
             "Content-Type": "application/json",
             Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUwNjU1MzAsImlhdCI6MTY3NTA2MTkzMH0.5y1gABc6CyMWNH2FpKmYclaSbzcfn2wqWB67cU_zEi4",
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNTM2OTYsImlhdCI6MTY3NTE1MDA5Nn0.tKJlNepjw95qmvaTCK3mxPt3w2-VJ0fXVjJ4wzJyC-M",
+          },
+        },
+        { withCredentials: true }
+      );
+      return thunkAPI.fulfillWithValue(result.data);
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+///////// 매치된 유저 상세페이지 thunk,GET ///////////////////
+export const __getMatchRoomThunk = createAsyncThunk(
+  actionType.user.GET_MATCH_ROOM,
+  async (roomId, thunkAPI) => {
+    try {
+      console.log(roomId);
+      const result = await axios.get(
+        `http://13.209.85.54:8080/profile/${roomId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNTM2OTYsImlhdCI6MTY3NTE1MDA5Nn0.tKJlNepjw95qmvaTCK3mxPt3w2-VJ0fXVjJ4wzJyC-M",
           },
         },
         { withCredentials: true }
@@ -88,6 +138,7 @@ export const __getMatchUsersThunk = createAsyncThunk(
 const initialState = {
   users: [],
   matchUsers: [],
+  matchRooms: [],
   isSuccess: false,
   isLoading: false,
   error: null,
@@ -119,7 +170,7 @@ export const userSlice = createSlice({
       .addCase(__getUsersThunk.rejected, (state, action) => {
         state.isSuccess = false;
         state.isLoading = false;
-        state.users = action.payload;
+        state.error = action.payload;
       })
 
       // 매치된 유저 조회
@@ -135,8 +186,24 @@ export const userSlice = createSlice({
       .addCase(__getMatchUsersThunk.rejected, (state, action) => {
         state.isSuccess = false;
         state.isLoading = false;
-        state.matchUsers = action.payload;
+        state.error = action.payload;
       })
+
+      //매치된 유저 상세페이지//
+      .addCase(__getMatchRoomThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__getMatchRoomThunk.fulfilled, (state, action) => {
+        state.isSuccess = true;
+        state.isLoading = false;
+        state.matchRooms = action.payload;
+      })
+      .addCase(__getMatchRoomThunk.rejected, (state, action) => {
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+
       //회원 가입//
       .addCase(__signup.pending, (state) => {
         state.isLoading = true;
@@ -147,6 +214,21 @@ export const userSlice = createSlice({
         console.log(action);
       })
       .addCase(__signup.rejected, (state, action) => {
+        state.isSuccess = false;
+        state.isLoading = false;
+        state.error = action.payload.response.data.errorMessage;
+      })
+      //로그인//
+      .addCase(__signin.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__signin.fulfilled, (state, action) => {
+        state.isSuccess = true;
+        state.isLoading = false;
+        console.log(action.payload);
+        // tokenManager.token = action.payload;
+      })
+      .addCase(__signin.rejected, (state, action) => {
         state.isSuccess = false;
         state.isLoading = false;
         state.error = action.payload.response.data.errorMessage;
