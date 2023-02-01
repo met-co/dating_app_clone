@@ -100,18 +100,18 @@ const Signup = () => {
   //유저 스테이트 구조분해 할당
   const { phoneNum, nickName, password, confirmpassword, birthDate } = user;
   //상태관리 위해 초기값 세팅
-  const [phonenumInput, setphonenumInput] = useState("");
-  const [nickNameInput, setnickNameInput] = useState("");
-  const [passInput, setPassInput] = useState("");
-  const [birthDateInput, setbirthDateInput] = useState("");
+  const [phonenumInput, setphonenumInput] = useState(false);
+  const [nickNameInput, setnickNameInput] = useState(false);
+  const [passInput, setPassInput] = useState(false);
+  const [birthDateInput, setbirthDateInput] = useState(false);
   const [wantingFemale, setWantingFemale] = useState(false);
   const [wantingMale, setWantingMale] = useState(false);
 
   //남성 여성 스테이트 생성
-  const [myGender, setMyGender] = useState();
+  const [myGender, setMyGender] = useState(null);
 
   //상대 남성 여성 스테이트 생성
-  const [togender, setToGender] = useState();
+  const [togender, setToGender] = useState(null);
   //정규식
   // const regphonenum = /^[0-9]{11}$/;
   // const regnickName = /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]{2,6}$/;
@@ -366,13 +366,30 @@ const Signup = () => {
                 <StLoadingContainer>
                   {isLoading && <Loading />}
                 </StLoadingContainer>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  sx={{ bgcolor: gTheme.color.primary, mt: 3 }}
-                >
-                  회원가입
-                </Button>
+                {(phonenumInput &&
+                  nickNameInput &&
+                  passInput &&
+                  birthDateInput &&
+                  myGender &&
+                  wantingFemale) ||
+                wantingMale ? (
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    sx={{ bgcolor: gTheme.color.primary, mt: 3 }}
+                  >
+                    회원가입
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    disabled
+                    sx={{ bgcolor: gTheme.color.primary, mt: 3 }}
+                  >
+                    회원가입
+                  </Button>
+                )}
               </Stpersonal>
             </StSignup>
           </StSignupBox>

@@ -2,16 +2,22 @@ import React from "react";
 import styled from "styled-components";
 import UserCommentListItem from "./UserCommentListItem";
 
-const UserCommentList = ({ comments, onClickDelete, onClickModify }) => {
+const UserCommentList = ({
+  comments,
+  onClickDelete,
+  onClickModify,
+  matchRooms,
+}) => {
   return (
     <StContainer>
       {comments &&
         comments.map((comment) => (
           <UserCommentListItem
-            key={comment.id}
+            key={comment.commentId}
             comment={comment}
             onClickDelete={onClickDelete}
             onClickModify={onClickModify}
+            matchRooms={matchRooms}
           />
         ))}
     </StContainer>
@@ -21,7 +27,9 @@ const UserCommentList = ({ comments, onClickDelete, onClickModify }) => {
 export default UserCommentList;
 
 const StContainer = styled.div`
-  width: 100%;
-  height: 200px;
-  border: 1px solid black;
+  width: 60%;
+  height: 400px;
+  overflow: scroll;
+  border: 1px solid #dcdcdc;
+  padding: 15px;
 `;

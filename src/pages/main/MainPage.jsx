@@ -10,6 +10,7 @@ import {
   __getUsersThunk,
   __userReset,
   __getMatchUsersThunk,
+  __userFavorite,
 } from "../../redux/modules/userSlice";
 import { useDispatch } from "react-redux";
 import Card from "../../components/Card";
@@ -18,7 +19,7 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const { users, isSuccess, matchUsers } = useSelector((state) => state.user);
 
-  console.log(matchUsers);
+  console.log(users);
 
   //////// simple code ///////
 
@@ -57,6 +58,10 @@ const MainPage = () => {
   useEffect(() => {
     dispatch(__getMatchUsersThunk());
   }, []);
+
+  const handleFavorite = (id) => {
+    dispatch(__userFavorite(id));
+  };
 
   // 새로고침 했을 때 마운트 되기전에 useState에 안담겨서
   // undefined 발생
@@ -107,7 +112,8 @@ const MainPage = () => {
     // during latest swipes. Only the last outOfFrame event should be considered valid
   };
 
-  const swipe = async (dir) => {
+  const swipe = async (dir, id) => {
+    handleFavorite(id);
     //
     if (canSwipe && currentIndex < users.length) {
       await childRefs[currentIndex].current.swipe(dir); // Swipe the card!
@@ -191,9 +197,13 @@ const MainPage = () => {
               <p>나와 매치된 유저 🥰</p>
             </Sttitle>
             <StchatList>
-              {matchUsers.map((matchUser) => {
-                return <Card key={matchUser.id} matchUser={matchUser} />;
-              })}
+              {matchUsers ? (
+                matchUsers.map((matchUser) => {
+                  return <Card key={matchUser.id} matchUser={matchUser} />;
+                })
+              ) : (
+                <div>매치된 유저가 없습니다.</div>
+              )}
             </StchatList>
           </StchatBox>
         </div>
@@ -221,10 +231,10 @@ const MainPage = () => {
                       backgroundImage: "url(" + character.profile + ")",
                     }}
                   >
+                    <h2>{character.distance}km</h2>
                     <h1>
-                      {character.nickName}, {character.age}
+                      {character.nickName}, {character.age}세
                     </h1>
-                    <h2>{character.distance}</h2>
                   </StCard>
                 </TinderCard>
               </StTinderBox>
@@ -235,7 +245,7 @@ const MainPage = () => {
               style={{ backgroundColor: !canSwipe && "#c3c4d3" }}
               onClick={() => swipe("left")}
             >
-              Swipe left!
+              N O P E
             </button>
             {/* <button
               style={{ backgroundColor: !canGoBack && "#c3c4d3" }}
@@ -243,13 +253,16 @@ const MainPage = () => {
             >
               Undo swipe!
             </button> */}
-            <button
-              style={{ backgroundColor: !canSwipe && "#c3c4d3" }}
-              onClick={() => swipe("right")}
-            >
-              Swipe right!
-            </button>
+            {users.map((character) => (
+              <button
+                style={{ backgroundColor: !canSwipe && "#c3c4d3" }}
+                onClick={() => swipe("right", character.id)}
+              >
+                L I K E
+              </button>
+            ))}
           </Stbuttons>
+
           {/* {lastDirection ? (
             <StinfoText key={lastDirection}>
               You swiped {lastDirection}
@@ -301,17 +314,22 @@ const StCard = styled.div`
   width: 80vw;
   max-width: 400px;
   height: 600px;
-  box-shadow: 0px 0px 60px 0px rgba(0, 0, 0, 0.3);
+  /* box-shadow: 0px 0px 60px 0px rgba(0, 0, 0, 0.3); */
+  border: 1px solid #cac7c7;
   border-radius: 20px;
   background-size: cover;
   background-position: center;
-  /* display: flex;
-  flex-direction: column-reverse; */
+  display: flex;
+  flex-direction: column-reverse;
   & > h1 {
-    position: absolute;
+    /* position: absolute; */
+    width: 100%;
     bottom: 0;
+    margin: 0px 10px;
+    color: black;
+  }
+  & > h2 {
     margin: 10px;
-    color: #fff;
   }
 `;
 
@@ -329,7 +347,6 @@ const Stbuttons = styled.div`
     border: none;
     color: #fff;
     font-size: 18px;
-    background-color: #9198e5;
     transition: 200ms;
     margin: 10px;
     font-weight: bolder;
@@ -339,6 +356,12 @@ const Stbuttons = styled.div`
     @media (max-width: 625px) {
       flex-direction: column;
     }
+  }
+  & > button:first-child {
+    background: #ec6947;
+  }
+  & > button:nth-child(2) {
+    background: #ec5e6f;
   }
 `;
 

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-// import { client } from "../../shared/api/api";
-// import { authAPI } from "../../shared/api/authAPI";
+import { client } from "../../shared/api/api";
+import { authAPI } from "../../shared/api/authAPI";
 import { tokenManager } from "../../shared/utils/tokenManeger";
 import axios from "axios";
 
@@ -13,6 +13,7 @@ export const actionType = {
     GET_USERS: "GET_USERS",
     GET_MATCH_USERS: "GET_MATCH_USERS",
     GET_MATCH_ROOM: "GET_MATCH_ROOM",
+    GET_USER_FAVORITE: "GET_USER_FAVORITE",
   },
 };
 
@@ -40,12 +41,9 @@ export const __signin = createAsyncThunk(
   async (user, thunkAPI) => {
     console.log(user);
     try {
-      const result = await axios.post(
-        "http://13.209.85.54:8080/members/login",
-        user
-      );
-      console.log(user);
-      localStorage.setItem("access_token", result.headers.authorization);
+      const result = await authAPI.post("members/login", user);
+
+      // localStorage.setItem("access_token", result.headers.authorization);
       // sessionStorage.setItem("refresh_token", res.headers.authorization);
       return thunkAPI.fulfillWithValue(result.headers.authorization);
     } catch (error) {
@@ -57,6 +55,20 @@ export const __signin = createAsyncThunk(
   }
 );
 
+//정상
+const token =
+  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTUiLCJleHAiOjE2NzUyMjUyODQsImlhdCI6MTY3NTIyMTY4NH0.qDM-nWNe9eGwTEfyzoFmO-bX95fLXODAd9eTlmE8b-4";
+
+//이상
+// 403 에러 (권한 없음)
+const token2 =
+  "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTAxMTExMjIyMiIsImV4cCI6MTY3NTE3NjUxNCwiaWF0IjoxNjc1MTcyOTE0fQ.pqA8TFMUH55i1dOOZgZ_bj9TXF0NZublZsFbp2bHmdc";
+
+//99998888
+//200 뜨고 response도 잘 받아오나 데이터 렌더링 불가함
+const token3 =
+  "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTA5OTk5ODg4OCIsImV4cCI6MTY3NTE3ODgxMSwiaWF0IjoxNjc1MTc1MjExfQ._6FI0ODrm3HnIyvij2Ix0b_V1-1niZyNVmCfSLNXQzY";
+
 ///////// 전체 유저 조회 thunk,GET ///////////////////
 export const __getUsersThunk = createAsyncThunk(
   actionType.user.GET_USERS,
@@ -67,8 +79,7 @@ export const __getUsersThunk = createAsyncThunk(
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNjM3NDMsImlhdCI6MTY3NTE2MDE0M30.R0MDL7tl43HN6dk-syr6dPDRzf-0RVwKbmxd6UHN4oU",
+            Authorization: token,
           },
           // params: {
           //   page: "1",
@@ -95,8 +106,7 @@ export const __getMatchUsersThunk = createAsyncThunk(
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNjM3NDMsImlhdCI6MTY3NTE2MDE0M30.R0MDL7tl43HN6dk-syr6dPDRzf-0RVwKbmxd6UHN4oU",
+            Authorization: token,
           },
         },
         { withCredentials: true }
@@ -120,8 +130,7 @@ export const __getMatchRoomThunk = createAsyncThunk(
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTEiLCJleHAiOjE2NzUxNjM3NDMsImlhdCI6MTY3NTE2MDE0M30.R0MDL7tl43HN6dk-syr6dPDRzf-0RVwKbmxd6UHN4oU",
+            Authorization: token,
           },
         },
         { withCredentials: true }
@@ -129,6 +138,28 @@ export const __getMatchRoomThunk = createAsyncThunk(
       return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
       console.log(error);
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+/////////// 좋아요 누르기 /////////////////
+export const __userFavorite = createAsyncThunk(
+  actionType.user.GET_USER_FAVORITE,
+  async (id, thunkAPI) => {
+    try {
+      const result = await axios.patch(
+        `http://13.209.85.54:8080/like/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        },
+        { withCredentials: true }
+      );
+      return thunkAPI.fulfillWithValue(result.data);
+    } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -203,6 +234,17 @@ export const userSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
+      //좋아요 누르기//
+      .addCase(__userFavorite.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(__userFavorite.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(__userFavorite.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
 
       //회원 가입//
       .addCase(__signup.pending, (state) => {
@@ -225,8 +267,7 @@ export const userSlice = createSlice({
       .addCase(__signin.fulfilled, (state, action) => {
         state.isSuccess = true;
         state.isLoading = false;
-        console.log(action.payload);
-        // tokenManager.token = action.payload;
+        tokenManager.token = action.payload;
       })
       .addCase(__signin.rejected, (state, action) => {
         state.isSuccess = false;
