@@ -48,7 +48,7 @@ const UserCommentListItem = ({
 
   const dateString = (comment) => {
     const date = new Date(comment.createdAt);
-    return `${date.toLocaleString()}`;
+    return `${date.toLocaleString("ko-KR")}`;
   };
 
   useEffect(() => {
@@ -84,10 +84,18 @@ const UserCommentListItem = ({
           <>
             <StUserContainer>
               <StimgBox>
-                <img src={matchRooms.myProfile} />
+                {comment.status ? (
+                  <img src={matchRooms.myProfile} />
+                ) : (
+                  <img src={matchRooms.yourProfile} />
+                )}
               </StimgBox>
               <StnicknameBox>
-                <p>{matchRooms.myName}</p>
+                {comment.status ? (
+                  <p>{matchRooms.myName}</p>
+                ) : (
+                  <p>{matchRooms.yourName}</p>
+                )}
               </StnicknameBox>
             </StUserContainer>
             <StContentBox>
@@ -138,7 +146,7 @@ const SCommentContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: stretch;
+  justify-content: space-around;
   height: 80px;
 `;
 

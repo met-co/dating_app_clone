@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { client } from "../../shared/api/api";
 
 export const actionType = {
   comment: {
@@ -20,19 +21,19 @@ export const __getComments = createAsyncThunk(
   async (roomId, thunkAPI) => {
     try {
       console.log(roomId);
-      const result = await axios.get(
-        `http://13.209.85.54:8080/comments/${roomId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-          // params: {
-          //   page: "1",
-          //   size: "100",
-          // },
-        },
-        { withCredentials: true }
+      const result = await client.get(
+        `/comments/${roomId}`
+        // {
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     Authorization: token,
+        //   },
+        //   // params: {
+        //   //   page: "1",
+        //   //   size: "100",
+        //   // },
+        // },
+        // { withCredentials: true }
       );
       console.log(result.data);
       return thunkAPI.fulfillWithValue(result.data);
@@ -47,21 +48,20 @@ export const __submitComment = createAsyncThunk(
   actionType.comment.POST_COMMENT,
   async (commentData, thunkAPI) => {
     try {
-      console.log(commentData);
-      const result = await axios.post(
-        `http://13.209.85.54:8080/comments`,
-        commentData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-          // params: {
-          //   page: "1",
-          //   size: "100",
-          // },
-        },
-        { withCredentials: true }
+      const result = await client.post(
+        `/comments`,
+        commentData
+        // {
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     Authorization: token,
+        //   },
+        //   // params: {
+        //   //   page: "1",
+        //   //   size: "100",
+        //   // },
+        // },
+        // { withCredentials: true }
       );
       return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
@@ -88,16 +88,21 @@ export const __modifyComment = createAsyncThunk(
   actionType.comment.MODIFY_COMMENT,
   async (payload, thunkAPI) => {
     try {
-      const result = await axios.post(
-        `http://13.209.85.54:8080/comments/${payload.commentId}`,
-        { content: payload.content },
+      console.log(payload);
+      const result = await client.patch(
+        `/comments/${payload.commentId}`,
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        },
-        { withCredentials: true }
+          content: payload.comment,
+        }
+        //   `http://13.209.85.54:8080/comments/${payload.commentId}`,
+        //   { content: payload.content },
+        //   {
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       Authorization: token,
+        //     },
+        //   },
+        //   { withCredentials: true }
       );
       return thunkAPI.fulfillWithValue(payload);
     } catch (error) {
@@ -141,7 +146,7 @@ const commentSlice = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
 
-        const comment = state.comments;
+        const comment = action.payload;
         console.log(comment);
         comment.status = true;
         // 내가 작성한 것 (true)으로 변경
@@ -180,7 +185,7 @@ const commentSlice = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
         state.comments = [...state.comments].map((comment) => {
-          if (comment.id === action.payload.commentId) {
+          if (comment.commentId === action.payload.commentId) {
             const newComment = comment;
             newComment.comment = action.payload.comment;
             return newComment;

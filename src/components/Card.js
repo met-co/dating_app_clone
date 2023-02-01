@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 const Card = ({ matchUser }) => {
+  console.log(matchUser);
   return (
     <StLink to={`/match/${matchUser.roomId}`} key={matchUser.id}>
       <StCard>

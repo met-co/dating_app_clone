@@ -9,11 +9,11 @@ export const client = axios.create({
   maxContentLength: Infinity,
 });
 
+const token = localStorage.getItem("access-token");
+
 client.defaults.withCredentials = true;
 client.defaults.headers.post["Content-Type"] = "application/json";
-client.defaults.headers.common[
-  "Authorization"
-] = `Bearer ${tokenManager.token}`;
+client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
 /* interceptors */
 client.interceptors.response.use(

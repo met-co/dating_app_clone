@@ -24,10 +24,7 @@ export const __signup = createAsyncThunk(
     // await gDelay(COMMON_DEALY_TIME);
     console.log(user);
     try {
-      const result = await axios.post(
-        `http://13.209.85.54:8080/members/signup`,
-        user
-      );
+      const result = await authAPI.post(`/members/signup`, user);
       return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -43,7 +40,7 @@ export const __signin = createAsyncThunk(
     try {
       const result = await authAPI.post("members/login", user);
 
-      // localStorage.setItem("access_token", result.headers.authorization);
+      //localStorage.setItem("access_token", result.headers.authorization);
       // sessionStorage.setItem("refresh_token", res.headers.authorization);
       return thunkAPI.fulfillWithValue(result.headers.authorization);
     } catch (error) {
@@ -56,8 +53,6 @@ export const __signin = createAsyncThunk(
 );
 
 //정상
-const token =
-  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTUiLCJleHAiOjE2NzUyMjUyODQsImlhdCI6MTY3NTIyMTY4NH0.qDM-nWNe9eGwTEfyzoFmO-bX95fLXODAd9eTlmE8b-4";
 
 //이상
 // 403 에러 (권한 없음)
@@ -69,24 +64,16 @@ const token2 =
 const token3 =
   "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTA5OTk5ODg4OCIsImV4cCI6MTY3NTE3ODgxMSwiaWF0IjoxNjc1MTc1MjExfQ._6FI0ODrm3HnIyvij2Ix0b_V1-1niZyNVmCfSLNXQzY";
 
+const token = localStorage.getItem("access-token");
+
 ///////// 전체 유저 조회 thunk,GET ///////////////////
 export const __getUsersThunk = createAsyncThunk(
   actionType.user.GET_USERS,
-  async (payload, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const result = await axios.get(
-        `http://13.209.85.54:8080/members/`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-          // params: {
-          //   page: "1",
-          //   size: "100",
-          // },
-        },
-        { withCredentials: true }
+      client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const result = await client.get(
+        process.env.REACT_APP_BASE_URL + `/members`
       );
       return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
@@ -99,17 +86,12 @@ export const __getUsersThunk = createAsyncThunk(
 ///////// 매치된 유저 전체 조회 thunk,GET ///////////////////
 export const __getMatchUsersThunk = createAsyncThunk(
   actionType.user.GET_MATCH_USERS,
-  async (payload, thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const result = await axios.get(
-        `http://13.209.85.54:8080/matching`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        },
-        { withCredentials: true }
+      console.log("bye");
+      client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const result = await client.get(
+        process.env.REACT_APP_BASE_URL + `/matching`
       );
       return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
@@ -125,15 +107,15 @@ export const __getMatchRoomThunk = createAsyncThunk(
   async (roomId, thunkAPI) => {
     try {
       console.log(roomId);
-      const result = await axios.get(
-        `http://13.209.85.54:8080/profile/${roomId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        },
-        { withCredentials: true }
+      const result = await client.get(
+        `profile/${roomId}`
+        // {
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     Authorization: token,
+        //   },
+        // },
+        // { withCredentials: true }
       );
       return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
@@ -148,15 +130,15 @@ export const __userFavorite = createAsyncThunk(
   actionType.user.GET_USER_FAVORITE,
   async (id, thunkAPI) => {
     try {
-      const result = await axios.patch(
-        `http://13.209.85.54:8080/like/${id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        },
-        { withCredentials: true }
+      const result = await client.patch(
+        `like/${id}`
+        // {
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     Authorization: token,
+        //   },
+        // },
+        // { withCredentials: true }
       );
       return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
