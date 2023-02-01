@@ -1,9 +1,5 @@
 import axios from "axios";
-import { tokenManager } from "../utils/tokenManager";
-
-// 테스트용
-const AUTH_TOKEN =
-  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJidXp6IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE2NzM5NDUzMTEsImlhdCI6MTY3Mzk0MTcxMX0.RPFBk53OaCwL7dfwuZth3ulMI5pS0X1q5h3ltFSm77I";
+import { tokenManager } from "../utils/tokenManeger";
 
 export const client = axios.create({
   baseURL: process.env.REACT_APP_BASE_URL,

@@ -8,13 +8,16 @@ import { gTheme } from "../../theme/globalTheme";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import UserCommentList from "./UserCommentList";
-import { __getComments } from "../../redux/modules/commentSlics";
-import { __submitComment } from "../../redux/modules/commentSlics";
-import { __deleteComment } from "../../redux/modules/commentSlics";
-import { __modifyComment } from "../../redux/modules/commentSlics";
+import { __getComments } from "../../redux/modules/commentSlice";
+import { __submitComment } from "../../redux/modules/commentSlice";
+import { __deleteComment } from "../../redux/modules/commentSlice";
+import { __modifyComment } from "../../redux/modules/commentSlice";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { border } from "@mui/system";
 
 const Match = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { roomId } = useParams();
   const { isSuccess, matchRooms, matchUsers } = useSelector(
     (state) => state.user
@@ -23,15 +26,16 @@ const Match = () => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
 
+  console.log(commentsData);
+
   const onChangeComment = (e) => {
     setComment(e.target.value);
   };
 
   const handleCommentSubmit = (e) => {
     let commentData = {
-      comment: comment,
-      isReply: false,
-      referenceId: roomId,
+      content: comment,
+      roomId: Number(roomId),
     };
     dispatch(__submitComment(commentData));
     setComment("");
@@ -58,6 +62,12 @@ const Match = () => {
   return (
     <Layout>
       <StContainer>
+        <StArrow>
+          <ArrowBackIosNewIcon
+            // sx={{ mt: 10, ml: 10 }}
+            onClick={() => navigate("/main")}
+          />
+        </StArrow>
         <StImageContainer>
           <img src={matchRooms.yourProfile} />
         </StImageContainer>
@@ -70,6 +80,7 @@ const Match = () => {
               comments={comments}
               onClickDelete={handleCommentDelete}
               onClickModify={handleCommentModify}
+              matchRooms={matchRooms}
             />
             <StCommentTextField
               id="outlined-basic"
@@ -141,7 +152,7 @@ const StCommentInputContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #dcdcdc;
+  /* border: 1px solid #dcdcdc; */
   height: 500px;
   gap: 20px;
 `;
@@ -153,4 +164,12 @@ const StCommentTextField = styled(TextField)`
 
 const StCommentRegistration = styled(Button)`
   height: 53px;
+  width: 30%;
+`;
+
+const StArrow = styled.div`
+  width: 50px;
+  height: 50px;
+  margin: 100px 0px 0px 110px;
+  cursor: pointer;
 `;

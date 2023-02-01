@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { tokenManager } from "../shared/utils/tokenManeger";
 
 const Header = () => {
   const navigate = useNavigate();
+  console.log(tokenManager.token);
 
   return (
     <StContainer>
@@ -12,7 +14,11 @@ const Header = () => {
         {/* <p>PINDER</p> */}
       </StLogo>
       <Stlogin>
-        <button onClick={() => navigate("/signin")}>로그인</button>
+        {tokenManager.token ? (
+          <button onClick={() => navigate("/main")}>메인으로</button>
+        ) : (
+          <button onClick={() => navigate("/signin")}>로그인</button>
+        )}
       </Stlogin>
     </StContainer>
   );

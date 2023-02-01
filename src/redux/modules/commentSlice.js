@@ -10,13 +10,32 @@ export const actionType = {
   },
 };
 
+//정상 (1번 회원)
+const token =
+  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwMTUiLCJleHAiOjE2NzUyMjUyODQsImlhdCI6MTY3NTIyMTY4NH0.qDM-nWNe9eGwTEfyzoFmO-bX95fLXODAd9eTlmE8b-4";
+
 /* 댓글 조회 */
 export const __getComments = createAsyncThunk(
   actionType.comment.GET_COMMENTS_BY_PRODUCT_ID,
   async (roomId, thunkAPI) => {
     try {
-      const result = await axios.get(`/comments/${roomId}`);
-      return thunkAPI.fulfillWithValue(result.data.comments);
+      console.log(roomId);
+      const result = await axios.get(
+        `http://13.209.85.54:8080/comments/${roomId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          // params: {
+          //   page: "1",
+          //   size: "100",
+          // },
+        },
+        { withCredentials: true }
+      );
+      console.log(result.data);
+      return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -28,7 +47,22 @@ export const __submitComment = createAsyncThunk(
   actionType.comment.POST_COMMENT,
   async (commentData, thunkAPI) => {
     try {
-      const result = await axios.post("/comments", commentData);
+      console.log(commentData);
+      const result = await axios.post(
+        `http://13.209.85.54:8080/comments`,
+        commentData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          // params: {
+          //   page: "1",
+          //   size: "100",
+          // },
+        },
+        { withCredentials: true }
+      );
       return thunkAPI.fulfillWithValue(result.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -54,9 +88,17 @@ export const __modifyComment = createAsyncThunk(
   actionType.comment.MODIFY_COMMENT,
   async (payload, thunkAPI) => {
     try {
-      let result = await axios.patch(`/comments/${payload.commentId}`, {
-        comment: payload.comment,
-      });
+      const result = await axios.post(
+        `http://13.209.85.54:8080/comments/${payload.commentId}`,
+        { content: payload.content },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        },
+        { withCredentials: true }
+      );
       return thunkAPI.fulfillWithValue(payload);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -99,8 +141,9 @@ const commentSlice = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
 
-        const comment = action.payload;
-        comment.state = true;
+        const comment = state.comments;
+        console.log(comment);
+        comment.status = true;
         // 내가 작성한 것 (true)으로 변경
         state.comments = [...state.comments, comment];
         // 댓글을 작성했을때 화면에 바로 보이게 하기
@@ -121,7 +164,7 @@ const commentSlice = createSlice({
         state.isSuccess = true;
         state.isLoading = false;
         state.comments = state.comments.filter(
-          (comment) => comment.id !== action.payload
+          (comment) => comment.commentId !== action.payload
         );
       })
       .addCase(__deleteComment.rejected, (state, action) => {
