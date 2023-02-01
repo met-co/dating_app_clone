@@ -14,6 +14,7 @@ import {
 } from "../../redux/modules/userSlice";
 import { useDispatch } from "react-redux";
 import Card from "../../components/Card";
+import { tokenManager } from "../../shared/utils/tokenManeger";
 
 const MainPage = () => {
   const dispatch = useDispatch();
@@ -41,10 +42,6 @@ const MainPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    dispatch(__getUsersThunk());
-  }, [dispatch]);
-
-  useEffect(() => {
     if (isSuccess) {
       // GET 되었을때 set
       setCurrentIndex(users.length - 1);
@@ -56,6 +53,8 @@ const MainPage = () => {
   }, [users, isSuccess, dispatch]);
 
   useEffect(() => {
+    console.log("adf");
+    dispatch(__getUsersThunk());
     dispatch(__getMatchUsersThunk());
   }, []);
 

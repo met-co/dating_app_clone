@@ -8,6 +8,7 @@ const UserCommentList = ({
   onClickModify,
   matchRooms,
 }) => {
+  console.log(comments);
   return (
     <StContainer>
       {comments &&

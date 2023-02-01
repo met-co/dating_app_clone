@@ -22,6 +22,7 @@ const Match = () => {
   const { isSuccess, matchRooms, matchUsers } = useSelector(
     (state) => state.user
   );
+  console.log(matchRooms);
   const commentsData = useSelector((state) => state.comment.comments);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
@@ -33,6 +34,8 @@ const Match = () => {
   };
 
   const handleCommentSubmit = (e) => {
+    // const date = new Date(commentsData.createdAt);
+    // console.log(date);
     let commentData = {
       content: comment,
       roomId: Number(roomId),

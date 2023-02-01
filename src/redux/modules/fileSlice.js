@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { authAPI } from "../../shared/api/authAPI";
 
 export const actionType = {
   file: {
@@ -18,7 +19,7 @@ export const __profileImageUpload = createAsyncThunk(
   actionType.file.POST_PROFILE_IMAGE,
   async (file, thunkAPI) => {
     try {
-      const result = await axios.post(`http://13.209.85.54:8080/upload`, file, {
+      const result = await authAPI.post(`/upload`, file, {
         params: {
           category: "image",
         },
